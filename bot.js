@@ -28,49 +28,6 @@ const optionActions = {
   chatAI: [{ text: 'Chatta con l\'AI', action: 'action' }],
 };
 
-// Gestione dei comandi personalizzati
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const welcomeMessage = 'Benvenuto su IT Italia! Sono il tuo assistente virtuale, non vedo l\'ora di aiutarti. Seleziona un\'opzione:';
-  sendOptionsMessage(chatId, welcomeMessage, mainMenuOptions);
-});
-
-bot.onText(/\/help/, (msg) => {
-  const chatId = msg.chat.id;
-  const helpMessage = 'Sono qui per fornirti assistenza. Puoi scegliere un\'opzione dal menu oppure utilizzare i comandi seguenti:\n/start - Mostra il messaggio di benvenuto\n/help - Fornisce informazioni sul bot\n/info - Fornisce informazioni su IT Italia';
-  bot.sendMessage(chatId, helpMessage);
-});
-
-bot.onText(/\/info/, (msg) => {
-  const chatId = msg.chat.id;
-  const botInfo = 'Sono un bot creato da IT Italia per fornire assistenza virtuale. Se hai bisogno di aiuto, non esitare a contattarmi.';
-  bot.sendMessage(chatId, botInfo);
-});
-
-// Gestione dei messaggi di testo
-bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-  const text = msg.text;
-
-  // Verifica se il messaggio corrisponde a una delle opzioni del menu principale
-  let optionSelected = false;
-  mainMenuOptions.forEach((option) => {
-    if (text === option.text) {
-      const action = option.action;
-      handleOptionAction(chatId, action);
-      optionSelected = true;
-    }
-  });
-
-  // Se l'utente ha selezionato un'opzione del menu, esci dalla funzione
-  if (optionSelected) {
-    return;
-  }
-
-  // Messaggio di default per testi non riconosciuti
-  handleDefaultMessage(chatId);
-});
-
 // Funzione per inviare un messaggio con opzioni
 function sendOptionsMessage(chatId, message, options) {
   const optionsMessage = {
@@ -81,11 +38,6 @@ function sendOptionsMessage(chatId, message, options) {
     },
   };
   bot.sendMessage(chatId, message, optionsMessage);
-}
-
-// Funzione per gestire il messaggio di default
-function handleDefaultMessage(chatId) {
-  bot.sendMessage(chatId, 'Mi dispiace, devi selezionare una delle opzioni indicate nei pulsanti o contattare un nostro agente');
 }
 
 // Funzione per gestire le azioni delle opzioni
@@ -109,3 +61,57 @@ function handleOptionAction(chatId, action) {
     handleDefaultMessage(chatId);
   }
 }
+
+// Funzione per inviare il messaggio di ritorno al menu
+function sendBackToMenuMessage(chatId) {
+  const backToMenuMessage = 'Seleziona un\'opzione tra le seguenti così provo ad aiutarti:';
+  sendOptionsMessage(chatId, backToMenuMessage, mainMenuOptions);
+}
+
+// Funzione per gestire il messaggio di default
+function handleDefaultMessage(chatId, text) {
+  if (text === '/start') {
+    const welcomeMessage = 'Benvenuto su IT Italia! Sono il tuo assistente virtuale, non vedo l\'ora di aiutarti. Seleziona un\'opzione:';
+    sendOptionsMessage(chatId, welcomeMessage, mainMenuOptions);
+  } else if (text === '/help') {
+    const helpMessage = 'Sono qui per fornirti assistenza. Puoi scegliere un\'opzione dal menu oppure utilizzare i comandi seguenti:\n/start - Mostra il messaggio di benvenuto\n/help - Fornisce informazioni sul bot\n/info - Fornisce informazioni su IT Italia';
+    bot.sendMessage(chatId, helpMessage);
+  } else if (text === '/info') {
+    const botInfo = 'Sono un bot creato da IT Italia per fornire assistenza virtuale. Se hai bisogno di aiuto, non esitare a contattarmi.';
+    bot.sendMessage(chatId, botInfo);
+  } else {
+    bot.sendMessage(chatId, 'Mi dispiace, devi selezionare una delle opzioni indicate nei pulsanti o contattare un nostro agente');
+  }
+}
+
+// Gestione dei comandi personalizzati
+bot.onText(/\/start/, (msg) => {
+  const chatId = msg.chat.id;
+  handleDefaultMessage(chatId, '/start');
+});
+
+bot.onText(/\/help/, (msg) => {
+  const chatId = msg.chat.id;
+  handleDefaultMessage(chatId, '/help');
+});
+
+bot.onText(/\/info/, (msg) => {
+  const chatId = msg.chat.id;
+  handleDefaultMessage(chatId, '/info');
+});
+
+// Gestione dei messaggi di testo
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+  const text = msg.text;
+
+  // Gestione delle opzioni e azioni
+  mainMenuOptions.forEach((option) => {
+    if (text === option.text) {
+      handleOptionAction(chatId, option.action);
+    }
+  });
+
+  // Messaggio di default per testi non riconosciuti
+  handleDefaultMessage(chatId, text);
+});
