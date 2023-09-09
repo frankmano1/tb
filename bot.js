@@ -58,7 +58,7 @@ function handleOptionAction(chatId, action) {
     }
   } else {
     // Azione associata non valida
-    handleDefaultMessage(chatId);
+    sendBackToMenuMessage(chatId);
   }
 }
 
@@ -105,13 +105,15 @@ bot.on('message', (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
 
-  // Gestione delle opzioni e azioni
-  mainMenuOptions.forEach((option) => {
-    if (text === option.text) {
-      handleOptionAction(chatId, option.action);
-    }
-  });
-
-  // Messaggio di default per testi non riconosciuti
-  handleDefaultMessage(chatId, text);
+  // Gestione dei comandi personalizzati
+  if (text.startsWith('/')) {
+    handleDefaultMessage(chatId, text);
+  } else {
+    // Gestione delle opzioni e azioni
+    mainMenuOptions.forEach((option) => {
+      if (text === option.text) {
+        handleOptionAction(chatId, option.action);
+      }
+    });
+  }
 });
