@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "node-telegram-bot-api": "^0.61.0",
+    "open": "^9.1.0",
+    "opn": "^6.0.0"
+  }
+}
