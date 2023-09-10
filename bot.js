@@ -1,78 +1,41 @@
-const TelegramBot = require('node-telegram-bot-api');
 const mysql = require('mysql');
-const config = require('./config.js');
+const readline = require('readline');
+const config = require('./config'); // Importa le credenziali dal file config.js
 
-const token = config.telegramBotToken;
-const bot = new TelegramBot(token, { polling: true });
-
-const db = mysql.createConnection({
+// Configura la connessione al database MySQL
+const dbConnection = mysql.createConnection({
   host: config.dbHost,
   user: config.dbUser,
   password: config.dbPassword,
-  database: config.dbName
+  database: config.dbName,
 });
 
-db.connect((err) => {
+dbConnection.connect((err) => {
   if (err) {
-    console.error('Errore nella connessione al database:', err);
-  } else {
-    console.log('Connessione al database MySQL avvenuta con successo!');
+    console.error('Errore nella connessione al database: ' + err.message);
+    return;
   }
+  console.log('Connesso al database MySQL');
 });
 
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Benvenuto su IT Italia, ti illustreremo tutte le funzionalità principali del nostro bot, ma prima presentiamoci!')
-    .then(() => {
-      setTimeout(() => {
-        bot.sendMessage(chatId, 'Come ti chiami? (Inserisci il tuo nome per continuare)');
-      }, 1000);
-    });
+// Crea l'interfaccia per leggere input dall'utente
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
 });
 
-bot.on('text', (msg) => {
-  const chatId = msg.chat.id;
-  const text = msg.text;
+// Funzione per eseguire una query SQL e gestire gli errori
+function queryDatabase(sql, values, callback) {
+  dbConnection.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Errore nell\'esecuzione della query: ' + err.message);
+      callback(err, null);
+    } else {
+      callback(null, result);
+    }
+  });
+}
 
-  if (text.startsWith('Il mio nome è ')) {
-    const name = text.replace('Il mio nome è ', '');
-
-    // Salva il nome nel database
-    db.query('INSERT INTO utenti (chat_id, nome) VALUES (?, ?)', [chatId, name], (err, result) => {
-      if (err) {
-        console.error('Errore durante l\'inserimento nel database:', err);
-      } else {
-        // Invia un messaggio personalizzato con il nome utente
-        bot.sendMessage(chatId, `Piacere di conoscerti, ${name}! Ti chiediamo un'ultima informazione, potresti scriverci qui sotto il tuo indirizzo email?`);
-      }
-    });
-
-    // Crea una variabile con il nome utente
-    const username = name;
-
-    // Attendi una risposta per l'indirizzo email
-    bot.once('text', (msg) => {
-      const email = msg.text;
-
-      // Salva l'indirizzo email nel database
-      db.query('UPDATE utenti SET email = ? WHERE chat_id = ?', [email, chatId], (err, result) => {
-        if (err) {
-          console.error('Errore durante l\'aggiornamento nel database:', err);
-        } else {
-          bot.sendMessage(chatId, `Grazie per averci fornito il tuo indirizzo email, ${username}! Ora abbiamo tutte le informazioni necessarie.`);
-        }
-      });
-    });
-  } else {
-    bot.sendMessage(chatId, `Hai scritto: ${text}`);
-  }
-});
-
-bot.on('polling_error', (error) => {
-  console.error(error);
-});
-
-bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Comando non riconosciuto. Prova /start per iniziare.');
-});
+// Funzione per porre una domanda all'utente
+function askQuestion(question, callback) {
+  rl.question(question + ' ',
