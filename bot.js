@@ -15,64 +15,6 @@ function sendOptionsMessage(chatId, message, options) {
   bot.sendMessage(chatId, message, optionsMessage);
 }
 
-// Funzione per gestire le azioni delle opzioni
-function handleOptionAction(chatId, action) {
-  const backToOptions = {
-    reply_markup: {
-      keyboard: [
-        ['Su di noi'],
-        ['Opzione 2'],
-        ['Opzione 3'],
-        ['Opzione 4'],
-        ['Opzione 5']
-      ],
-      resize_keyboard: true,
-      one_time_keyboard: true
-    }
-  };
-
-  if (action === 'I nostri servizi') {
-    // Apri la webview con l'URL specificato
-    const webviewOptions = {
-      reply_markup: {
-        inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/servizi' }]]
-      }
-    };
-    bot.sendMessage(chatId, 'Hai selezionato I nostri servizi. Clicca sul pulsante per aprire la webview.', webviewOptions);
-  } else if (action === 'Portfolio') {
-    // Apri la webview con l'URL specificato
-    const webviewOptions = {
-      reply_markup: {
-        inline_keyboard: [[{ text: 'Apri', url: 'https://portfolio.ititalia.it' }]]
-      }
-    };
-    bot.sendMessage(chatId, 'Hai selezionato Portfolio. Clicca sul pulsante per aprire la webview.', webviewOptions);
-  } else {
-    bot.sendMessage(chatId, 'Hai selezionato ' + action, backToOptions);
-  }
-}
-
-// Funzione per inviare il messaggio di ritorno al menu
-function sendBackToMenuMessage(chatId) {
-  const backToMenuMessage = 'Seleziona un\'opzione tra le seguenti così provo ad aiutarti:';
-
-  const menuOptions = {
-    reply_markup: {
-      keyboard: [
-        ['Su di noi'],
-        ['Opzione 2'],
-        ['Opzione 3'],
-        ['Opzione 4'],
-        ['Opzione 5']
-      ],
-      resize_keyboard: true,
-      one_time_keyboard: true
-    }
-  };
-
-  bot.sendMessage(chatId, backToMenuMessage, menuOptions);
-}
-
 // Funzione per gestire il messaggio di default
 function handleDefaultMessage(chatId) {
   bot.sendMessage(chatId, 'Mi dispiace, devi selezionare una delle opzioni indicate nei pulsanti o contattare un nostro agente');
@@ -90,7 +32,7 @@ bot.on('message', (msg) => {
       case '/start':
         const welcomeMessage = 'Benvenuto su IT Italia! Sono il tuo assistente virtuale, non vedo l\'ora di aiutarti. Seleziona un\'opzione tra le seguenti:';
         const startOptions = [
-          ['Su di noi'],
+          ['Chi siamo'],
           ['Opzione 2'],
           ['Opzione 3'],
           ['Opzione 4'],
@@ -117,10 +59,14 @@ bot.on('message', (msg) => {
   } else {
     // Gestione delle opzioni e azioni
     switch (text) {
-      case 'Su di noi':
-        const aboutUsMessage = 'Hai selezionato Su di noi. Scegli un\'azione:';
-        const aboutUsActions = [['I nostri servizi'], ['Portfolio'], ['Azione 2'], ['Torna al menu']];
-        sendOptionsMessage(chatId, aboutUsMessage, aboutUsActions);
+      case 'Chi siamo':
+        const aboutUsMessage = 'Benvenuti in IT Italia! Siamo un team di esperti pronti ad aiutarvi. Clicca sul pulsante sottostante per ulteriori informazioni:';
+        const webviewOptions = {
+          reply_markup: {
+            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it' }]]
+          }
+        };
+        bot.sendMessage(chatId, aboutUsMessage, webviewOptions);
         break;
 
       case 'Opzione 2':
@@ -147,27 +93,15 @@ bot.on('message', (msg) => {
         sendOptionsMessage(chatId, option5Message, option5Actions);
         break;
 
-      case 'I nostri servizi':
-      case 'Portfolio':
-      case 'Azione 2':
-      case 'Azione 3':
-      case 'Azione 4':
-      case 'Azione 5':
-      case 'Azione 6':
-      case 'Azione 7':
-      case 'Azione 8':
-      case 'Azione 9':
-      case 'Azione 10':
-        handleOptionAction(chatId, text);
-        break;
-
-      case 'Torna al menu':
-        sendBackToMenuMessage(chatId);
-        break;
-
       default:
-        handleDefaultMessage(chatId);
+        // Messaggio di default per altre opzioni
+        bot.sendMessage(chatId, 'Opzione non valida, seleziona un\'opzione dal menu.');
         break;
     }
   }
+});
+
+// Avvia il bot
+bot.on('polling_error', (error) => {
+  console.log(error);
 });
