@@ -33,7 +33,7 @@ bot.on('message', (msg) => {
         const welcomeMessage = 'Benvenuto su IT Italia! Sono il tuo assistente virtuale, non vedo l\'ora di aiutarti. Seleziona un\'opzione tra le seguenti:';
         const startOptions = [
           ['Chi siamo'],
-          ['Opzione 2'],
+          ['Servizi'],
           ['Opzione 3'],
           ['Opzione 4'],
           ['Opzione 5']
@@ -61,41 +61,55 @@ bot.on('message', (msg) => {
     switch (text) {
       case 'Chi siamo':
         const aboutUsMessage = 'Benvenuti in IT Italia! Siamo un team di esperti pronti ad aiutarvi. Clicca sul pulsante sottostante per ulteriori informazioni:';
-        const webviewOptions = {
+        const aboutUsWebviewOptions = {
           reply_markup: {
             inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it' }]]
           }
         };
-        bot.sendMessage(chatId, aboutUsMessage, webviewOptions);
+        bot.sendMessage(chatId, aboutUsMessage, aboutUsWebviewOptions);
         break;
 
-      case 'Opzione 2':
-        const option2Message = 'Hai selezionato Opzione 2. Scegli un\'azione:';
-        const option2Actions = [['Azione 3'], ['Azione 4'], ['Torna al menu']];
-        sendOptionsMessage(chatId, option2Message, option2Actions);
+      case 'Servizi':
+        const servicesMessage = 'Hai selezionato Servizi. Scegli un\'azione:';
+        const servicesActions = [
+          ['Consulenza', 'Siti Web', 'Formazione'],
+          ['Torna al menu']
+        ];
+        sendOptionsMessage(chatId, servicesMessage, servicesActions);
         break;
 
-      case 'Opzione 3':
-        const option3Message = 'Hai selezionato Opzione 3. Scegli un\'azione:';
-        const option3Actions = [['Azione 5'], ['Azione 6'], ['Torna al menu']];
-        sendOptionsMessage(chatId, option3Message, option3Actions);
+      case 'Consulenza':
+        const consulenzaMessage = 'Hai selezionato Consulenza. Clicca sul pulsante sottostante per ulteriori informazioni:';
+        const consulenzaWebviewOptions = {
+          reply_markup: {
+            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/consulenza' }]]
+          }
+        };
+        bot.sendMessage(chatId, consulenzaMessage, consulenzaWebviewOptions);
         break;
 
-      case 'Opzione 4':
-        const option4Message = 'Hai selezionato Opzione 4. Scegli un\'azione:';
-        const option4Actions = [['Azione 7'], ['Azione 8'], ['Torna al menu']];
-        sendOptionsMessage(chatId, option4Message, option4Actions);
+      case 'Siti Web':
+        const sitiWebMessage = 'Hai selezionato Siti Web. Clicca sul pulsante sottostante per ulteriori informazioni:';
+        const sitiWebWebviewOptions = {
+          reply_markup: {
+            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/siti-web' }]]
+          }
+        };
+        bot.sendMessage(chatId, sitiWebMessage, sitiWebWebviewOptions);
         break;
 
-      case 'Opzione 5':
-        const option5Message = 'Hai selezionato Opzione 5. Scegli un\'azione:';
-        const option5Actions = [['Azione 9'], ['Azione 10'], ['Torna al menu']];
-        sendOptionsMessage(chatId, option5Message, option5Actions);
+      case 'Formazione':
+        const formazioneMessage = 'Hai selezionato Formazione. Clicca sul pulsante sottostante per ulteriori informazioni:';
+        const formazioneWebviewOptions = {
+          reply_markup: {
+            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/formazione' }]]
+          }
+        };
+        bot.sendMessage(chatId, formazioneMessage, formazioneWebviewOptions);
         break;
 
       default:
-        // Messaggio di default per altre opzioni
-        bot.sendMessage(chatId, 'Opzione non valida, seleziona un\'opzione dal menu.');
+        handleDefaultMessage(chatId);
         break;
     }
   }
