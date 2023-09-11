@@ -7,9 +7,9 @@ const bot = new TelegramBot(config.telegramBotToken, { polling: true });
 const mainMenu = [
   ['Chi siamo'],
   ['Servizi'],
-  ['Opzione 3'],
-  ['Opzione 4'],
-  ['Opzione 5']
+  ['Portfolio'],
+  ['Le nostre News'], // Modifica il testo del pulsante "Opzione 4" in "Le nostre News"
+  ['Area Clienti'], // Modifica il testo del pulsante "Opzione 5" in "Area Clienti"
 ];
 
 // Funzione per inviare un messaggio con opzioni
@@ -80,34 +80,53 @@ bot.on('message', (msg) => {
         sendOptionsMessage(chatId, servicesMessage, servicesActions);
         break;
 
-      case 'Consulenza':
-        const consulenzaMessage = 'Hai selezionato Consulenza. Clicca sul pulsante sottostante per ulteriori informazioni:';
-        const consulenzaWebviewOptions = {
+      case 'Portfolio':
+        const portfolioMessage = 'Hai selezionato Portfolio. Clicca sul pulsante sottostante per ulteriori informazioni:';
+        const portfolioWebviewOptions = {
           reply_markup: {
-            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/consulenza' }]]
+            inline_keyboard: [[{ text: 'Apri', url: 'https://portfolio.ititalia.it' }]]
           }
         };
-        bot.sendMessage(chatId, consulenzaMessage, consulenzaWebviewOptions);
+        bot.sendMessage(chatId, portfolioMessage, portfolioWebviewOptions);
         break;
 
-      case 'Siti Web':
-        const sitiWebMessage = 'Hai selezionato Siti Web. Clicca sul pulsante sottostante per ulteriori informazioni:';
-        const sitiWebWebviewOptions = {
+      case 'Le nostre News':
+        const newsMessage = 'Hai selezionato Le nostre News. Clicca sul pulsante sottostante per ulteriori informazioni:';
+        const newsWebviewOptions = {
           reply_markup: {
-            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/siti-web' }]]
+            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/blog' }]]
           }
         };
-        bot.sendMessage(chatId, sitiWebMessage, sitiWebWebviewOptions);
+        bot.sendMessage(chatId, newsMessage, newsWebviewOptions);
         break;
 
-      case 'Formazione':
-        const formazioneMessage = 'Hai selezionato Formazione. Clicca sul pulsante sottostante per ulteriori informazioni:';
-        const formazioneWebviewOptions = {
+      case 'Area Clienti':
+        const areaClientiMessage = 'Hai selezionato Area Clienti. Scegli un\'azione:';
+        const areaClientiActions = [
+          ['Contatti', 'Assistenza Clienti'],
+          ['Torna al menu']
+        ];
+        sendOptionsMessage(chatId, areaClientiMessage, areaClientiActions);
+        break;
+
+      case 'Contatti':
+        const contattiMessage = 'Hai selezionato Contatti. Clicca sul pulsante sottostante per ulteriori informazioni:';
+        const contattiWebviewOptions = {
           reply_markup: {
-            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/formazione' }]]
+            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/contatti' }]]
           }
         };
-        bot.sendMessage(chatId, formazioneMessage, formazioneWebviewOptions);
+        bot.sendMessage(chatId, contattiMessage, contattiWebviewOptions);
+        break;
+
+      case 'Assistenza Clienti':
+        const assistenzaMessage = 'Hai selezionato Assistenza Clienti. Clicca sul pulsante sottostante per ulteriori informazioni:';
+        const assistenzaWebviewOptions = {
+          reply_markup: {
+            inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/assistenza' }]]
+          }
+        };
+        bot.sendMessage(chatId, assistenzaMessage, assistenzaWebviewOptions);
         break;
 
       case 'Torna al menu':
