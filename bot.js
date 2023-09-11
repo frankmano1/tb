@@ -3,6 +3,15 @@ const config = require('./config'); // Importa il file di configurazione
 
 const bot = new TelegramBot(config.telegramBotToken, { polling: true });
 
+// Variabile per memorizzare il menu principale
+const mainMenu = [
+  ['Chi siamo'],
+  ['Servizi'],
+  ['Opzione 3'],
+  ['Opzione 4'],
+  ['Opzione 5']
+];
+
 // Funzione per inviare un messaggio con opzioni
 function sendOptionsMessage(chatId, message, options) {
   const optionsMessage = {
@@ -31,14 +40,7 @@ bot.on('message', (msg) => {
     switch (text) {
       case '/start':
         const welcomeMessage = 'Benvenuto su IT Italia! Sono il tuo assistente virtuale, non vedo l\'ora di aiutarti. Seleziona un\'opzione tra le seguenti:';
-        const startOptions = [
-          ['Chi siamo'],
-          ['Servizi'],
-          ['Opzione 3'],
-          ['Opzione 4'],
-          ['Opzione 5']
-        ];
-        sendOptionsMessage(chatId, welcomeMessage, startOptions);
+        sendOptionsMessage(chatId, welcomeMessage, mainMenu);
         break;
 
       case '/help':
@@ -106,6 +108,10 @@ bot.on('message', (msg) => {
           }
         };
         bot.sendMessage(chatId, formazioneMessage, formazioneWebviewOptions);
+        break;
+
+      case 'Torna al menu':
+        sendOptionsMessage(chatId, 'Seleziona un\'opzione tra le seguenti:', mainMenu);
         break;
 
       default:
