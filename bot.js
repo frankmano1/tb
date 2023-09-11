@@ -71,14 +71,48 @@ bot.on('message', (msg) => {
         bot.sendMessage(chatId, aboutUsMessage, aboutUsWebviewOptions);
         break;
 
-      case 'Servizi':
-        const servicesMessage = 'Hai selezionato Servizi. Scegli un\'azione:';
-        const servicesActions = [
-          ['Consulenza', 'Siti Web', 'Formazione'],
-          ['Torna al menu']
-        ];
-        sendOptionsMessage(chatId, servicesMessage, servicesActions);
-        break;
+        case 'Servizi':
+          const servicesMessage = 'Hai selezionato Servizi. Scegli un\'azione:';
+          const servicesActions = [
+            ['Consulenza', 'Siti Web', 'Formazione'],
+            ['Torna al menu']
+          ];
+          sendOptionsMessage(chatId, servicesMessage, servicesActions);
+          break;
+  
+        case 'Consulenza':
+          const consulenzaMessage = 'Hai selezionato Consulenza. Clicca sul pulsante sottostante per ulteriori informazioni:';
+          const consulenzaWebviewOptions = {
+            reply_markup: {
+              inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/consulenza' }]]
+            }
+          };
+          bot.sendMessage(chatId, consulenzaMessage, consulenzaWebviewOptions);
+          break;
+  
+        case 'Siti Web':
+          const sitiWebMessage = 'Hai selezionato Siti Web. Clicca sul pulsante sottostante per ulteriori informazioni:';
+          const sitiWebWebviewOptions = {
+            reply_markup: {
+              inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/siti-web' }]]
+            }
+          };
+          bot.sendMessage(chatId, sitiWebMessage, sitiWebWebviewOptions);
+          break;
+  
+        case 'Formazione':
+          const formazioneMessage = 'Hai selezionato Formazione. Clicca sul pulsante sottostante per ulteriori informazioni:';
+          const formazioneWebviewOptions = {
+            reply_markup: {
+              inline_keyboard: [[{ text: 'Apri', url: 'https://ititalia.it/formazione' }]]
+            }
+          };
+          bot.sendMessage(chatId, formazioneMessage, formazioneWebviewOptions);
+          break;
+  
+        case 'Torna al menu':
+          sendOptionsMessage(chatId, 'Seleziona un\'opzione tra le seguenti:', mainMenu);
+          break;
 
       case 'Portfolio':
         const portfolioMessage = 'Hai selezionato Portfolio. Clicca sul pulsante sottostante per ulteriori informazioni:';
@@ -138,6 +172,11 @@ bot.on('message', (msg) => {
         break;
     }
   }
+});
+
+// Avvia il bot
+bot.on('polling_error', (error) => {
+  console.log(error);
 });
 
 // Avvia il bot
